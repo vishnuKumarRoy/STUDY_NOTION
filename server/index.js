@@ -17,15 +17,22 @@ const { cloudinaryconnect } = require("./config/cloudinary");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 database.connect();
 
 app.use(express.json());
 app.use(cookieParser());
 
-const whitelist = process.env.CORS_ORIGIN
-  ? JSON.parse(process.env.CORS_ORIGIN)
-  : ["*"];
+let whitelist = "*";
+
+if (process.env.CORS_ORIGIN) {
+  try {
+    whitelist = JSON.parse(process.env.CORS_ORIGIN);
+  } catch (error) {
+    console.error("Invalid CORS_ORIGIN env value, falling back to '*'");
+    whitelist = process.env.CORS_ORIGIN;
+  }
+}
 
 app.use(
   cors({
